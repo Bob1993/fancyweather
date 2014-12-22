@@ -1,6 +1,5 @@
 package com.fancyweather.app.db;
 
-import java.net.ContentHandler;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,14 +70,14 @@ public class FancyWeatherDB {
 			values.put("city_name", city.getCityName());
 			values.put("city_code", city.getCityCode());
 			values.put("province_id", city.getProvinceId());
-			db.insert("Province", null, values);
+			db.insert("City", null, values);
 		}
 	}
 	
 	public List<City> loadCities(int provinceId)
 	{
 		List<City> list= new ArrayList<City>();
-		Cursor cursor= db.query("Province", null, "provinceId= ?", new String[]{String.valueOf(provinceId)}, null, null, null);
+		Cursor cursor= db.query("City", null, "province_id= ?", new String[]{String.valueOf(provinceId)}, null, null, null);
 		
 		//if (cursor.moveToFirst()) {//如果第一行不为空，则开始遍历
 		while(cursor.moveToNext()){

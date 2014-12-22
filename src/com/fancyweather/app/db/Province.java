@@ -22,5 +22,4 @@ public class Province {
 	public void setProvinceCode(String provinceCode) {
 		this.provinceCode = provinceCode;
 	}
-
 }

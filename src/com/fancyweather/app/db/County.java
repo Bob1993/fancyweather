@@ -29,5 +29,4 @@ public class County {
 	public void setCityId(int cityId) {
 		this.cityId = cityId;
 	}
-	
 }
