@@ -58,7 +58,7 @@ public class ChooseAreaActivity extends Activity {
 		isFromWeatherActivity= getIntent().getBooleanExtra("from_weather_activity", false);//默认不是来自天气界面
 		SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(this);
 		if (prefs.getBoolean("city_selected", false)&& !isFromWeatherActivity) {//默认为未选定，因为第一次进来的时候可能prefs为空，这样就不需要跳入天气界面了，而是继续选择天气.还有一种可能就是已经选定城市了，现在时重新选城市，这时候如果是来自天气的跳转，就不应该转向天气。
-			Intent intent= new Intent(this, WeatherActivity.class);
+			Intent intent= new Intent(this, WeatherActivity.class);//在sharedPreferenced里有选定的天气，那么进入程序后直接进入天气界面
 			startActivity(intent);
 			finish();
 			return;

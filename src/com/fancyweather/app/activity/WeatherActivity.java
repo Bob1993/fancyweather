@@ -96,7 +96,7 @@ public class WeatherActivity extends Activity implements OnClickListener{
 	private void queryWeatherInfo(String weatherCode)//根据天气代号查询天气信息，这个和上边那个是递进的关系，并非并列，不过在刷新的时候是可以进行直接调用的
 	{
 		String address= "http://www.weather.com.cn/data/cityinfo/"+
-	weatherCode+".html";
+	weatherCode+".html";//注意，这里是html超文本文件，而不是xml文件
 		queryFromServer(address, "weatherCode");
 	}
 	
@@ -138,7 +138,7 @@ public class WeatherActivity extends Activity implements OnClickListener{
 						publishText.setText("同步失败");
 					}
 				});
-			}
+			} 
 		});
 	}
 	
