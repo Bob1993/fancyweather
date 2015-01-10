@@ -10,12 +10,15 @@ import com.fancyweather.app.db.FancyWeatherDB;
 import com.fancyweather.app.db.Province;
 import com.fancyweather.app.util.HttpCallbackListener;
 import com.fancyweather.app.util.HttpUtil;
+import com.fancyweather.app.util.LogUtil;
 import com.fancyweather.app.util.Utility;
 
-import android.R.anim;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -46,11 +49,21 @@ public class ChooseAreaActivity extends Activity {
 	private Province selectedProvince;
 	private City selectedCity;
 	private int currentLevel;// 当前所属等级
+	private boolean isFromWeatherActivity;//判断跳转是否来自天气界面
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		isFromWeatherActivity= getIntent().getBooleanExtra("from_weather_activity", false);//默认不是来自天气界面
+		SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(this);
+		if (prefs.getBoolean("city_selected", false)&& !isFromWeatherActivity) {//默认为未选定，因为第一次进来的时候可能prefs为空，这样就不需要跳入天气界面了，而是继续选择天气.还有一种可能就是已经选定城市了，现在时重新选城市，这时候如果是来自天气的跳转，就不应该转向天气。
+			Intent intent= new Intent(this, WeatherActivity.class);
+			startActivity(intent);
+			finish();
+			return;
+		}
+		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.choose_area);
 		listView = (ListView) findViewById(R.id.list_view);
@@ -71,6 +84,12 @@ public class ChooseAreaActivity extends Activity {
 				} else if (currentLevel == LEVEL_CITY) {
 					selectedCity = cityList.get(position);
 					queryCounties();
+				} else if (currentLevel== LEVEL_COUNTY) {
+					String countyCode= countyList.get(position).getCountyCode();
+					Intent intent= new Intent(ChooseAreaActivity.this, WeatherActivity.class);
+					intent.putExtra("county_code", countyCode);
+					startActivity(intent);
+					finish();
 				}
 			}
 		});
@@ -125,10 +144,10 @@ public class ChooseAreaActivity extends Activity {
 			titleText.setText(selectedCity.getCityName());
 			currentLevel = LEVEL_COUNTY;// 当前所处县级列表
 		} else {
-			Log.d("query", countyList.size()+"");
+			LogUtil.d("query", countyList.size()+"");
 			//Log.d("query", "query form server in County");
 			queryFromServer(selectedCity.getCityCode(), "county");// 数据库中没有该城市信息，则根据市号去查其下的所有县
-			Log.d("query", "finish");
+			LogUtil.d("query", "finish");
 		}
 	}
 
@@ -215,6 +234,13 @@ public class ChooseAreaActivity extends Activity {
 		} else if (currentLevel == LEVEL_CITY) {
 			queryProvinces();
 		} else
+		{
+			if(isFromWeatherActivity)
+			{
+				Intent intent= new Intent(this, WeatherActivity.class);
+				startActivity(intent);
+			}
 			finish();
+		}
 	}
 }
